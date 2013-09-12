@@ -27,7 +27,7 @@ describe "User pages" do
 
     describe "with invalid information" do
       it "should not create a user" do
-        expect { click_button submit }.not_to change(User, :count)
+        expect { click_button submit }.not_to change_users #change(User, :count)
       end
 
       describe "after blank submission" do
@@ -44,15 +44,11 @@ describe "User pages" do
       end
 
       describe "after submission with long name, existing email and mismatched passwords" do
+        let (:user) { FactoryGirl.create(:user) }
         before do
-          fill_in "Name",         with: "Example User"
-          fill_in "Email",        with: "user@example.com"
-          fill_in "Password",     with: "foobar"
-          fill_in "Confirmation", with: "foobar"
-          click_button submit
           visit signup_path
           fill_in "Name",         with: "a"*51
-          fill_in "Email",        with: "user@example.com"
+          fill_in "Email",        with: user.email
           fill_in "Password",     with: "foobar"
           fill_in "Confirmation", with: "foobarr"
           click_button submit
@@ -74,16 +70,16 @@ describe "User pages" do
       end
 
       it "should create a user" do
-        expect { click_button submit }.to change(User, :count).by(1)
+        expect { click_button submit }.to create_user #change(User, :count).by(1)
       end
       
       describe "after saving the user" do
         before { click_button submit }
-        let(:user) { User.find_by(email: 'user@example.com') }
+        get_a_user
 
         it { should have_link('Sign out') }
         it { should have_title(user.name) }
-        it { should have_selector('div.alert.alert-success', text: 'Welcome') }
+        it { should have_success_message('Welcome') }
       end
     end
   end
