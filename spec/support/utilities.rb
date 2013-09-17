@@ -23,15 +23,3 @@ RSpec::Matchers.define :have_success_message do |message|
     expect(page).to have_selector('div.alert.alert-success', text: message)
   end
 end
-
-def change_users
-	change(User, :count)
-end
-
-def create_user
-	change(User, :count).by(1)
-end
-
-def get_a_user
-	let(:user) { User.find_by(email: 'user@example.com') }
-end
